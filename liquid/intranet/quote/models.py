@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import html
 from intranet.models import Member
+from django.shortcuts import get_object_or_404
 
 # Create your models here.
 class Quote(models.Model):
@@ -38,10 +39,8 @@ class Quote(models.Model):
          quote_count += 1
       
          # Convert author's netid to their name (if possible)
-         author_obj = Member.objects.get(username=author_netid)
+         author_obj = get_object_or_404(Member, username=author_netid)
          author = author_obj.full_name()
-         if author == None or len(author) == 0:
-            author = author_netid
       
          # ============ In-quote tagged authors ===========          + r"(?=($|(?<=(\.|\s|\:))))"
          self.quote_text = re.sub(r"(^|(?<=(\.|\s|:)))(?P<author>(" + author + "|" + author_obj.first_name + "|" + author_netid + "))", "<a href='/intranet/quote/?author=" + author_netid + "'>\g<author></a>", self.quote_text)  
@@ -77,10 +76,8 @@ class Quote(models.Model):
             poster_count += 1
             
             # Convert poster's netid to their name (if possible)
-            poster_obj = Member.objects.get(username=poster_netid)
+            poster_obj = get_object_or_404(Poster, username=poster_netid)
             poster = poster_obj.full_name()
-            if poster == None or len(poster) == 0:
-               poster = poster_netid
             
             # Quote separators (commas and ands)
             if poster_count != 1:
