@@ -133,13 +133,11 @@ def edit(request, quoteId = 1):
       
       # Convert <br />'s into newlines (\n - TODO?: this may cause issues for Windows users)
       quote_obj.quote_text = string.replace(quote_obj.quote_text, "<br />", "\n")
- 
       quote_form = QuoteForm(instance=quote_obj)
 
    quote_form.fields["quote_posters"].widget = forms.HiddenInput()
    
    # --- Return form (either a new one, or one with existing data if user has provided invalid data) ---
-   print author_usernames    
    quoteMembers = Member.objects.filter(username__in=author_usernames) # Get authors' Member objects
    
    return render_to_response('intranet/quote/edit.html',{"section":"intranet","page":'quote',"form":quote_form, "members":Member.objects.all(),"quoteMembers":quoteMembers,"quote_id":quoteId,"user":request.user},context_instance=RequestContext(request))  

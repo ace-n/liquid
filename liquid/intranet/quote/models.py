@@ -62,19 +62,11 @@ class Quote(models.Model):
          self.quote_posters = "," + html.escape(re.sub(",\s+", ",", self.quote_posters).strip(",")) + ","
          posters = self.quote_posters.strip(",").split(",")
       else:
-         posters = dict() # Posters should contain no elements if self.quote_posters is blank
+         posters = [] # Posters should contain no elements if self.quote_posters is blank
          
       # If the quote posters are different than the quote authors, create the quote poster HTML
-      posters_are_authors = len(posters) == len(authors) or len(posters) == 0; # Posters were not recorded for some earlier quotes
-      if posters_are_authors:
-         
-         # Poster --> author check (since the counts are equal, we only need to check in one direction)
-         for poster in posters:
-            posters_are_authors = posters_are_authors and poster in authors;
-            if not posters_are_authors:
-               break
-      
-      if not posters_are_authors:
+      posters_are_authors = set(posters) == set(authors)
+      if not posters_are_authors and len(posters) != 0:
       
          # Create quote poster HTML
          self.quote_poster_html = " (Posted by "
